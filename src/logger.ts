@@ -1,8 +1,18 @@
 import pino from "pino"
 import pretty from "pino-pretty"
+const prettyTime = new Intl.DateTimeFormat(undefined,{
+    timeZone: process.env.TZ,
+    dateStyle: "short",
+    timeStyle: "medium",
+    hour12: false
 
+    
+})
 const stream = pretty({
-  translateTime: "HH:MM:ss",
+  translateTime: false,
+  customPrettifiers: {
+    time: (value) => prettyTime.format(new Date(Number(value)))
+  },
   ignore: "pid,hostname",
   levelFirst: true,
   singleLine: true
