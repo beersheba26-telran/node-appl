@@ -1,8 +1,8 @@
 import LoggerHandler from "./LoggerHandler.js";
-
-const consoleHandler = (message: string) => console.log(message)
+import LoggerFormatter from "./LoggerFormatter.js";
 export default class ConsoleHandler implements LoggerHandler {
+    constructor(private _formatter: LoggerFormatter) {}
     handler(): (message: string) => void {
-        return  consoleHandler
+        return  (message: string) => console.log(this._formatter.format(message))
     }
 }
