@@ -1,8 +1,10 @@
-import LoggerHandler from "./LoggerHandler.js";
+import LoggerHandler, { HandlerFunction } from "./LoggerHandler.js";
 import LoggerFormatter from "./LoggerFormatter.js";
+import { LoggerLevel } from "./LoggerEmitter.js";
 export default class ConsoleHandler implements LoggerHandler {
     constructor(private _formatter: LoggerFormatter) {}
-    handler(): (message: string) => void {
-        return  (message: string) => console.log(this._formatter.format(message))
+    handler(): HandlerFunction {
+        return  (message: string, level?: LoggerLevel) => console.log(this._formatter.format(message,
+             !!level ? level : undefined))
     }
 }

@@ -1,8 +1,9 @@
+import { LoggerLevel } from "./LoggerEmitter.js";
 import LoggerFormatter from "./LoggerFormatter.js";
 
 export default class TimeFormatter implements LoggerFormatter {
   constructor(private _timeZone?: string) {}
-  format(message: string): string {
+  format(message: string, level?: LoggerLevel): string {
     let running = true;
     let time: Intl.DateTimeFormat;
     while (running) {
@@ -18,6 +19,6 @@ export default class TimeFormatter implements LoggerFormatter {
          this._timeZone = undefined
       }
     }
-    return `${time!.format(new Date())} ${message}`;
+    return `${level? level.toUpperCase() + " " : ""}${time!.format(new Date())} ${message}`;
   }
 }

@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events';
 import LoggerHandler from './LoggerHandler.js';
-type LoggerLevel = "fatal"|"error"|"warn"|"info"|"debug"|"trace"
+export type LoggerLevel = "fatal"|"error"|"warn"|"info"|"debug"|"trace"
 const DEFAULT_LOGGER_LEVEL = "info"
 const logDef: Record<LoggerLevel, number> = {
   fatal: 1,
@@ -29,9 +29,16 @@ export default class LoggerEmitter extends EventEmitter {
             configLevel = DEFAULT_LOGGER_LEVEL
         }
 
-        logDef[level] <= logDef[configLevel as LoggerLevel] && this.emit("message", message)
+        logDef[level] <= logDef[configLevel as LoggerLevel] && this.emitMessage( message, level)
     }
-    setHandler(handler: (message:string) => void) {
-        this.on("message", handler)
+    setHandler(handler: LoggerHandler) {
+        this.on("message", handler.handler())
+    }
+    setLevelHandler(level: LoggerLevel, handler: LoggerHandler) {
+        this.on(level, handler.handler())
+    }
+    private emitMessage(message: string, level: LoggerLevel) {
+        this.emit("message", message, level);
+        this.emit(level, message, level)
     }
 }

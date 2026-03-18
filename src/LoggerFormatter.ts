@@ -1,3 +1,5 @@
+import { LoggerLevel } from "./LoggerEmitter.js";
+
 export default interface LoggerFormatter {
-    format(message: string): string
+    format(message: string, level?: LoggerLevel): string
 }
