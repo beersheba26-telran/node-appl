@@ -12,7 +12,7 @@ async function displayStreamedNumbers(min: number, max: number, amount: number,
         new RandomNumbersStream(min, max),
         new FilterNumberStream(pred),
         new LimitStream(amount),
-        new OutputStream(" ", createWriteStream("large_file"))
+        new OutputStream(" ")
     )
 }
 displayStreamedNumbers(10, 100, 15, num => num % 2 != 0).then(()=> console.log("Bye"))
