@@ -3,7 +3,7 @@ import { Readable, ReadableOptions } from "node:stream";
 export default class RandomNumbersStream extends Readable {
     private _counter: number = 0
     constructor(private _amount: number, private _min: number, private _max: number,
-        private _chunkNumbers: number = 1024 * 1024,
+        private _chunkNumbers: number = 1024 * 1024 ,
          options: ReadableOptions={}) {
         super(options)
         if (_min > _max) {
