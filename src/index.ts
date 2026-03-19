@@ -2,9 +2,13 @@ import "dotenv/config";
 import logger from "./logger.js";
 import { createWriteStream } from "node:fs";
 import RandomNumbersStream from "./RandomNumbersStream.js";
-const writeStream = createWriteStream("large_file", { highWaterMark: 1024 * 1024 * 50})
-console.time("pipe")
-new RandomNumbersStream(1_000_000_000, 10, 3000000).pipe(writeStream)
-writeStream.on("finish", ()=>console.timeEnd("pipe"))
+import FilterNumberStream from "./FilterStream.js";
+import LimitStream from "./LimitStream.js";
+import OutputStream from "./OutputStream.js";
+new RandomNumbersStream(10, 100).pipe(new FilterNumberStream((num => num % 10 ==0)))
+.pipe(new LimitStream(20)).pipe(new OutputStream())
+
+
+
 
 
