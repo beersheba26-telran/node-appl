@@ -11,9 +11,17 @@ export default async function displayUniqueNumbers(min: number, max: number, amo
         if (amount > max - min + 1) {
             throw Error(`amount (${amount}) cannot be greater than max(${max}) - min(${min}) + 1))`)
         }
-    await pipeline(
-        new RandomNumbersStream(min, max),
-        new DistinctLimitStream(amount),
-        new OutputStream(" ", writeStream)
-    )
+    const output = new OutputStream(" ", writeStream)
+    const ac = new AbortController();
+    output.once("finish", () =>ac.abort())
+   try {
+     await pipeline(
+         new RandomNumbersStream(min, max),
+         new DistinctLimitStream(amount),
+         output,
+         {signal: ac.signal}
+     )
+   } catch (error: any) {
+      if (error.code != "ABORT_ERR") throw error
+   }
 }

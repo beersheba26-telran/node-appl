@@ -11,6 +11,6 @@ export default class OutputStream extends Writable {
     }
     override _final(callback: (error?: Error | null) => void): void {
         this._writeStream.write("\n")
-        this.end()
+      callback()
     }
 }
