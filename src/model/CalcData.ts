@@ -1,5 +1,3 @@
-export type CalcData = {
-    op1: number,
-    op2: number,
-    operation: string
-}
+import z from "zod"
+import calcDataSchema from "../controller/validation.js"
+export type CalcData = z.infer<typeof calcDataSchema>

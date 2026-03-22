@@ -4,6 +4,8 @@ import http, { ServerResponse, IncomingMessage } from "node:http";
 import calculate from "../service/calculate.js";
 import { CalcData } from "../model/CalcData.js";
 import { ServiceError } from "../errors/ServiceError.js";
+import calcDataSchema from "./validation.js";
+import { ZodError } from "zod";
 const server = http.createServer();
 const port = process.env.PORT || 3500;
 server.listen(port, () => console.log(`server listening on port ${port}`));
@@ -20,7 +22,10 @@ server.on("request", async (req, res) => {
   catch (error: any) {
     if (error instanceof ServiceError) {
        sendResponse(res, error.code, error.message)
-    } else {
+    } else if(error instanceof ZodError) {
+        sendResponse(res, 400, error.issues.map(issue => `${issue.path}: ${issue.message}`).join(";"))
+    }
+    else {
         sendResponse(res, 500, `Inner Server error: ${error.message}`)
     }
   }
@@ -32,7 +37,13 @@ async function getCalcData(request: IncomingMessage): Promise<CalcData> {
         data += chunk
     }
     logger.debug(`received JSON is ${data}`)
-    const result: CalcData = JSON.parse(data)
+    let payload: any;
+    try {
+        payload = JSON.parse(data)
+    } catch (error) {
+        throw new ServiceError(400, `invalid JSON format\n ${data}`)
+    }
+    const result: CalcData = calcDataSchema.parse(payload)
   return result;
 }
 function sendResponse(response: ServerResponse, code: number, message: string): void {
